@@ -1,0 +1,117 @@
+# To build and run with Docker:
+# docker build -t bookstoreapi .
+# docker run -p 5136:5136 bookstoreapi
+
+@baseUrl = https://localhost:5136
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBleGFtcGxlLmNvbSIsInN1YiI6IjIiLCJqdGkiOiJmZmJmMjZhYS0xYzY1LTRmYWQtYTM2My0wM2Q0MGY1MDdlODUiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc0Nzc0MDc4NiwiaXNzIjoiQm9va1N0b3JlQXBpIiwiYXVkIjoiQm9va1N0b3JlQXBpIn0.2ki2K0xw-4tPBMwPwp7GMG8xq-CUnV-Ws0ujXVQjQF8
+@userToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoibmV3dXNlciIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL2VtYWlsYWRkcmVzcyI6Im5ld3VzZXJAZXhhbXBsZS5jb20iLCJzdWIiOiIzIiwianRpIjoiN2E5OTI0OTQtMWQzZS00ZGFlLWI4YTMtMTUzM2U1NTUwN2E2IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVXNlciIsImV4cCI6MTc0Nzc0MDg0MCwiaXNzIjoiQm9va1N0b3JlQXBpIiwiYXVkIjoiQm9va1N0b3JlQXBpIn0.T00leG05gDYlNuizyanJJY0VNHFiWp4oYpKrIr9v3RY
+
+### Login as Admin
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "Aa@12340000"
+}
+
+### Login as Regular User
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "newuser",
+    "password": "Password123!"
+}
+
+### Login as Regular User
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+    "username": "user",
+    "password": "Uu@12340000"
+}
+
+
+### Register New User (Admin Only)
+POST {{baseUrl}}/api/auth/register
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+    "username": "user",
+    "email": "newuser@example.com",
+    "password": "Uu@12340000"
+}
+
+### Request Password Reset
+POST {{baseUrl}}/api/auth/forgot-password
+Content-Type: application/json
+
+{
+    "email": "newuser@example.com"
+}
+
+### Reset Password
+POST {{baseUrl}}/api/auth/reset-password
+Content-Type: application/json
+
+{
+    "email": "newuser@example.com",
+    "token": "your-reset-token-here",
+    "newPassword": "NewPassword123!"
+}
+
+### Refresh Token
+POST {{baseUrl}}/api/auth/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": "8d525509-2aeb-4529-80c9-4e6eb2094487"
+}
+
+### Get All Books (Public)
+GET {{baseUrl}}/api/books
+
+### Get Book by ID (Public)
+GET {{baseUrl}}/api/books/4
+
+### Search Books by Title (Public)
+GET {{baseUrl}}/api/books/search?title=great
+
+### Create New Book (Authenticated)
+POST {{baseUrl}}/api/books
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+    "title": "New Book by NewUser",
+    "author": "Author Name",
+    "isbn": "1234567890",
+    "price": 29.99,
+    "publishedDate": "2024-01-01T00:00:00",
+    "description": "Book description"
+}
+
+### Update Book (Authenticated)
+PUT {{baseUrl}}/api/books/13
+Authorization: Bearer {{userToken}}
+Content-Type: application/json
+
+{
+    "id": 13,
+    "title": "Updated Book Title with id 13",
+    "author": "Updated Author",
+    "isbn": "13131313",
+    "price": 1039.99,
+    "publishedDate": "2024-01-01T00:00:00",
+    "description": "Updated book description"
+}
+
+### Delete Book (Authenticated)
+DELETE {{baseUrl}}/api/books/12
+Authorization: Bearer {{userToken}}
+
+### Health Check
+GET {{baseUrl}}/health
