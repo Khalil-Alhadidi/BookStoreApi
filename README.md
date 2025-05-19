@@ -2,7 +2,7 @@
 
 ## Overview
 BookStoreApi is a .NET Core Web API project that provides endpoints for managing books and user authentication. It is built using the latest .NET 9.0 framework and follows a clean architecture approach.
-Created by Cursor (90%) and the rest by me.
+Created by Cursor (90%) and the rest by me (Khalil ^__^).
 
 ## Features
 - **Book Management:** CRUD operations for books.
