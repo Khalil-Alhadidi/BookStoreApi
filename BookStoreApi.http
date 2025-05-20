@@ -1,6 +1,4 @@
-# To build and run with Docker:
-# docker build -t bookstoreapi .
-# docker run -p 5136:5136 bookstoreapi
+
 
 @baseUrl = https://localhost:5136
 @adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWRtaW4iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJhZG1pbkBleGFtcGxlLmNvbSIsInN1YiI6IjIiLCJqdGkiOiI2ZGQ2Y2RmOS0wNzY5LTRjYmMtOWFkNC1jMzcxOTc0NTI0NzYiLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJBZG1pbiIsImV4cCI6MTc0Nzg0NzcwMSwiaXNzIjoiQm9va1N0b3JlQXBpIiwiYXVkIjoiQm9va1N0b3JlQXBpIn0.k9xxsE8SCssUzmXMrV3JwonOHXKHGmIcRHpqu1Lv0L0
@@ -35,7 +33,7 @@ Content-Type: application/json
 
 
 ### Register New User (Admin Only)
-POST {{baseUrl}}/api/auth/register
+POST {{baseUrl}}/api/v1/auth/register
 Authorization: Bearer {{adminToken}}
 Content-Type: application/json
 
@@ -46,7 +44,7 @@ Content-Type: application/json
 }
 
 ### Request Password Reset
-POST {{baseUrl}}/api/auth/forgot-password
+POST {{baseUrl}}/api/v1/auth/forgot-password
 Content-Type: application/json
 
 {
@@ -54,7 +52,7 @@ Content-Type: application/json
 }
 
 ### Reset Password
-POST {{baseUrl}}/api/auth/reset-password
+POST {{baseUrl}}/api/v1/auth/reset-password
 Content-Type: application/json
 
 {
@@ -64,7 +62,7 @@ Content-Type: application/json
 }
 
 ### Refresh Token
-POST {{baseUrl}}/api/auth/refresh
+POST {{baseUrl}}/api/v1/auth/refresh
 Content-Type: application/json
 
 {
@@ -95,7 +93,7 @@ Content-Type: application/json
 }
 
 ### Update Book (Authenticated)
-PUT {{baseUrl}}/api/books/13
+PUT {{baseUrl}}/api/v1/books/13
 Authorization: Bearer {{userToken}}
 Content-Type: application/json
 
@@ -110,7 +108,7 @@ Content-Type: application/json
 }
 
 ### Delete Book (Authenticated)
-DELETE {{baseUrl}}/api/books/12
+DELETE {{baseUrl}}/api/v1/books/12
 Authorization: Bearer {{userToken}}
 
 ### Health Check

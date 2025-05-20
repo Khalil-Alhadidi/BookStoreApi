@@ -15,12 +15,6 @@ using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load environment-specific configuration
-builder.Configuration
-    .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-    .AddEnvironmentVariables();
 
 // Serilog configuration
 // In Production, you might want to use a more sophisticated logging configuration (e.g., write to files, Serilog.Sinks.ApplicationInsights for Azure etc.)
