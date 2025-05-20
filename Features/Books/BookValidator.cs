@@ -11,6 +11,7 @@ public class BookValidator : AbstractValidator<Book>
             .MaximumLength(100).WithMessage("Title must be at most 100 characters.");
         RuleFor(x => x.Author)
             .NotEmpty().WithMessage("Author is required.")
+            .MinimumLength(5).WithMessage("Author must be at least 5 characters.")
             .MaximumLength(100).WithMessage("Author must be at most 100 characters.");
         RuleFor(x => x.Price)
             .GreaterThanOrEqualTo(0).WithMessage("Price must be non-negative.");

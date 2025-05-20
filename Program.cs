@@ -10,6 +10,8 @@ using Microsoft.OpenApi.Models;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.Versioning;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +23,10 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 // Serilog configuration
+// In Production, you might want to use a more sophisticated logging configuration (e.g., write to files, Serilog.Sinks.ApplicationInsights for Azure etc.)
 Log.Logger = new LoggerConfiguration()
+    .Enrich.FromLogContext()
+    .Enrich.WithProperty("Application", "BookStoreApi")
     .WriteTo.Console()
     .CreateLogger();
 builder.Host.UseSerilog();
@@ -30,46 +35,6 @@ builder.Host.UseSerilog();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddAuthorization();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
-{
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "BookStore API", Version = "v1" });
-    
-    // Add JWT Authentication to Swagger
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-    {
-        Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
-
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
-        {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
-});
-
-// Add CORS policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowFrontend", policy =>
-    {
-        policy.WithOrigins(builder.Configuration["FrontendUrl"]!) // Change or add origins as needed
-              .AllowAnyHeader()
-              .AllowAnyMethod();
-    });
-});
 
 // Register services
 ServiceRegistration.RegisterServices(builder.Services, builder.Configuration);
@@ -127,7 +92,7 @@ if (app.Environment.IsDevelopment())
 }
 
 
-
+// To log requests and responses
 app.UseSerilogRequestLogging();
 
 // Important: Add these middleware components in the correct order
@@ -145,6 +110,7 @@ app.Use(async (context, next) =>
     }
     catch (Exception ex)
     {
+        Log.Error(ex, "An unhandled exception occurred while processing the request."+ex.Message);
         context.Response.StatusCode = 500;
         var problemDetails = new ProblemDetails
         {
@@ -157,8 +123,11 @@ app.Use(async (context, next) =>
     }
 });
 
+// Map versioned endpoints
 app.MapBookEndpoints();
 app.MapAuthEndpoints();
+
+
 
 app.MapHealthChecks("/health");
 

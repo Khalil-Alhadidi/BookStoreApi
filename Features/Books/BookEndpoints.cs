@@ -11,7 +11,7 @@ public static class BookEndpoints
 {
     public static void MapBookEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/books")
+        var group = app.MapGroup("/api/v{version:apiVersion}/books")
             .WithTags("Books")
             .RequireRateLimiting("Books");
 
@@ -37,8 +37,14 @@ public static class BookEndpoints
 
         group.MapPost("/", [Authorize] async (
             [FromBody] Book book,
-            IBookService bookService) =>
+            IBookService bookService,
+            IValidator<Book> validator) =>
         {
+            var validationResult = await validator.ValidateAsync(book);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
             var createdBook = await bookService.CreateBookAsync(book);
             return Results.Created($"/api/books/{createdBook.Id}", createdBook);
         });
@@ -46,10 +52,17 @@ public static class BookEndpoints
         group.MapPut("/{id}", [Authorize] async (
             int id,
             [FromBody] Book book,
-            IBookService bookService) =>
+            IBookService bookService,
+            IValidator<Book> validator) =>
         {
             if (id != book.Id)
                 return Results.BadRequest(new { message = "ID mismatch" });
+
+            var validationResult = await validator.ValidateAsync(book);
+            if (!validationResult.IsValid)
+            {
+                return Results.ValidationProblem(validationResult.ToDictionary());
+            }
 
             var updatedBook = await bookService.UpdateBookAsync(book);
             if (updatedBook == null)

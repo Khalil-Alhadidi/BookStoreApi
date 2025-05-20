@@ -17,8 +17,11 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/auth")
+        var group = //app.MapGroup("/api/auth")
+             app.MapGroup("/api/v{version:apiVersion}/auth")
             .WithTags("Authentication");
+
+        
 
         group.MapPost("/register", [Authorize(Roles = "Admin")] async (
             [FromBody] RegisterRequest register,
